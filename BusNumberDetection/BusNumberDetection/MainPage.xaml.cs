@@ -86,6 +86,8 @@ namespace BusNumberDetection
                 content.Add(byteArrayContent, "file", title);
                 var response = await HttpClient.PostAsync("http://localhost:5000/predict", content);
                 var responseStr = response.Content.ReadAsStringAsync().Result;
+
+                await DisplayAlert("Номер Автобуса", response.ToString(), "ОK");
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     await DisplayAlert("Номер Автобуса", responseStr, "ОK");
@@ -95,7 +97,7 @@ namespace BusNumberDetection
                     await DisplayAlert("Что-то пошло не так", responseStr, "ОK");
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 await DisplayAlert("Что-то пошло не так", "Попробуйте ещё раз!", "ОK");
             }
