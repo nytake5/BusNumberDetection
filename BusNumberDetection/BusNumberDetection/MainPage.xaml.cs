@@ -86,9 +86,9 @@ namespace BusNumberDetection
                 var response = await HttpClient.PostAsync("http://localhost:5000", content);
                 var responseStr = response.Content.ReadAsStringAsync().Result;
 
-                await DisplayAlert("Номер Автобуса", responseStr, "ОK");
+                await DisplayAlert("Номер Автобуса", response.ToString(), "ОK");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 await DisplayAlert("Что-то пошло не так", "Попробуйте ещё раз!", "ОK");
             }
