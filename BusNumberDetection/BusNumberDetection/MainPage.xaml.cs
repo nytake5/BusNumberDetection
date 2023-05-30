@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -50,7 +51,7 @@ namespace BusNumberDetection
                 var photo = await MediaPicker.PickPhotoAsync();
                 img.Source = ImageSource.FromFile(photo.FullPath);
 
-                await SendPhotoAsyncAndProcessResponse(photo.FullPath);
+                await SendPhotoAsyncAndProcessResponse(photo.FullPath, photo.FileName);
             }
             catch (Exception ex)
             {
@@ -72,21 +73,27 @@ namespace BusNumberDetection
                 await stream.CopyToAsync(newStream);
             img.Source = ImageSource.FromFile(photo.FullPath);
 
-            await SendPhotoAsyncAndProcessResponse(photo.FullPath);
+            await SendPhotoAsyncAndProcessResponse(photo.FullPath, photo.FileName);
         }
 
-        private async Task SendPhotoAsyncAndProcessResponse(string photoFullPath)
+        private async Task SendPhotoAsyncAndProcessResponse(string photoFullPath, string title)
         {
             try
             {
                 MultipartFormDataContent content = new MultipartFormDataContent();
                 var bytes = GetBytesFromImage(photoFullPath);
                 ByteArrayContent byteArrayContent = new ByteArrayContent(bytes);
-                content.Add(byteArrayContent, "file", "photoFullPath");
-                var response = await HttpClient.PostAsync("http://localhost:5000", content);
+                content.Add(byteArrayContent, "file", title);
+                var response = await HttpClient.PostAsync("http://localhost:5000/predict", content);
                 var responseStr = response.Content.ReadAsStringAsync().Result;
-
-                await DisplayAlert("Номер Автобуса", responseStr, "ОK");
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    await DisplayAlert("Номер Автобуса", responseStr, "ОK");
+                }
+                else
+                {
+                    await DisplayAlert("Что-то пошло не так", responseStr, "ОK");
+                }
             }
             catch (Exception)
             {
