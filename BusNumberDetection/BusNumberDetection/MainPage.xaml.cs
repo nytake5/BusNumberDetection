@@ -87,10 +87,10 @@ namespace BusNumberDetection
                 var response = await HttpClient.PostAsync("http://localhost:5000/predict", content);
                 var responseStr = response.Content.ReadAsStringAsync().Result;
 
-                await DisplayAlert("Номер Автобуса", response.ToString(), "ОK");
+                await DisplayAlert("Номер транспортного средства", response.ToString(), "ОK");
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    await DisplayAlert("Номер Автобуса", responseStr, "ОK");
+                    await DisplayAlert("Номер транспортного средства", responseStr, "ОK");
                 }
                 else
                 {
